@@ -1,0 +1,27 @@
+---
+- name: Install neovim kickstart dependencies
+  tags: [neoivm]
+  ansible.builtin.dnf5:
+    name:
+      - ripgrep
+      - wl-clipboard
+
+- name: Clone neovim kickstart tree
+  tags: [neovim]
+  become: false
+  become_user: "{{ username }}"
+  ansible.builtin.git:
+    repo: https://github.com/nvim-lua/kickstart.nvim.git
+    dest: "/home/{{ username }}/.config/nvim"
+    clone: true
+    update: true
+
+- name: Copy custom init.lua
+  tags: [neovim]
+  become: false
+  become_user: "{{ username }}"
+  ansible.builtin.copy:
+    src: init.lua
+    dest: "/home/{{ username }}/.config/nvim/init.lua"
+    group: "{{ username }}"
+    owner: "{{ username }}"

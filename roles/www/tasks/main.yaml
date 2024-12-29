@@ -1,0 +1,54 @@
+---
+- name: Install Google Chrome Browser
+  tags: [www]
+  ansible.builtin.dnf5:
+    name: google-chrome-stable
+    state: latest
+
+- name: Install Brave Browser
+  tags: [www]
+  community.general.flatpak:
+    name: com.brave.Browser
+    state: present
+
+- name: Install Transmission BitTorrent Client
+  tags: [www]
+  community.general.flatpak:
+    name: com.transmissionbt.Transmission
+    state: present
+
+- name: Install Slack
+  tags: [www]
+  community.general.flatpak:
+    name: com.slack.Slack
+    state: present
+
+- name: Install Halloy IRC client
+  tags: [www]
+  community.general.flatpak:
+    name: org.squidowl.halloy
+    state: present
+
+- name: Install Zoom
+  tags: [www]
+  community.general.flatpak:
+    name: us.zoom.Zoom
+    state: present
+
+- name: Install Skype
+  tags: [www]
+  community.general.flatpak:
+    name: com.skype.Client
+    state: present
+
+- name: Install Insomnia REST Client
+  tags: [www]
+  community.general.flatpak:
+    name: dev.restfox.Restfox
+    state: present
+
+- name: Install Meld Diff Tool
+  tags: [www]
+  community.general.flatpak:
+    name: org.gnome.meld
+    state: present

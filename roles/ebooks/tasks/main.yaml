@@ -1,0 +1,12 @@
+---
+- name: Install Calibre EBook Reader
+  tags: [ebooks]
+  community.general.flatpak:
+    name: com.calibre_ebook.calibre
+    state: present
+
+- name: Install Foliate
+  tags: [ebooks]
+  community.general.flatpak:
+    name: com.github.johnfactotum.Foliate
+    state: present

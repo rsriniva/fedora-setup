@@ -1,0 +1,31 @@
+---
+- name: Enable tap-to-click
+  tags: [gnome]
+  ansible.builtin.command: dconf write /org/gnome/desktop/peripherals/touchpad/tap-to-click true
+
+- name: Enable two finger scrolling
+  tags: [gnome]
+  ansible.builtin.command: dconf write /org/gnome/desktop/peripherals/touchpad/two-finger-scrolling-enabled true
+
+- name: Disable touchpad when typing
+  tags: [gnome]
+  ansible.builtin.command: dconf write /org/gnome/desktop/peripherals/touchpad/disable-while-typing true
+
+- name: Enable traditional scrolling
+  tags: [gnome]
+  ansible.builtin.command: dconf write /org/gnome/desktop/peripherals/touchpad/natural-scroll false
+
+- name: Set touchpad pointer speed
+  tags: [gnome]
+  ansible.builtin.command: dconf write /org/gnome/desktop/peripherals/touchpad/speed 0.8
+
+- name: Install GNOME related packages
+  tags: [gnome]
+  ansible.builtin.dnf:
+    name:
+      - gnome-tweaks
+      - gnome-shell-extension-appindicator
+      - gnome-shell-extension-drive-menu
+      - gnome-shell-extension-launch-new-instance
+      - gnome-shell-extension-no-overview
+      - gnome-shell-extension-workspace-indicator

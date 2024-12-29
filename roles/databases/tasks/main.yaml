@@ -1,0 +1,72 @@
+---
+- name: Install sqlite
+  tags: [databases]
+  ansible.builtin.dnf:
+    name: sqlite
+
+- name: Download MongDB repo GPG keys
+  tags: [databases]
+  ansible.builtin.command: rpm --import https://www.mongodb.org/static/pgp/server-8.0.asc
+
+- name: Configure MongoDB DNF Repo
+  tags: [databases]
+  ansible.builtin.blockinfile:
+    dest: /etc/yum.repos.d/mongodb.repo
+    create: true
+    block: |
+      [mongodb-8]
+      name=MongoDB Server Community Edition
+      baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/8.0/x86_64/
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://www.mongodb.org/static/pgp/server-8.0.asc
+
+- name: Refresh DNF cache
+  tags: [databases]
+  ansible.builtin.command: dnf check-update
+
+- name: Install MongoDB Community Edition
+  tags: [databases]
+  ansible.builtin.dnf:
+    name:
+      - mongodb-org
+      - mongodb-org-server
+
+- name: Install MongoDB Compass
+  tags: [databases]
+  community.general.flatpak:
+    name: com.mongodb.Compass
+    state: present
+
+- name: Install MySQL Community Edition
+  tags: [databases]
+  ansible.builtin.dnf:
+    name:
+      - mysql-server
+      - mysql
+      - mysql-devel
+
+- name: Install Database Tools and GUI
+  tags: [databases]
+  ansible.builtin.dnf:
+    name:
+      - sequeler
+
+- name: Install DBeaver DB GUI
+  tags: [databases]
+  community.general.flatpak:
+    name: io.dbeaver.DBeaverCommunity
+    state: present
+
+- name: Install PgAdmin4
+  tags: [databases]
+  community.general.flatpak:
+    name: org.pgadmin.pgadmin4
+    state: present
+
+- name: Install PostgreSQL server and client
+  tags: [databases]
+  ansible.builtin.dnf:
+    name:
+      - postgresql-server
+      - postgresql

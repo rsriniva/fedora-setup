@@ -1,0 +1,12 @@
+--- 
+- name: Install OpenJDK 21 JDK
+  tags: [java]
+  ansible.builtin.dnf5:
+    name: java-21-openjdk-devel
+    state: latest
+   
+- name: Install Apache Maven
+  tags: [java]
+  ansible.builtin.dnf5:
+    name: maven-openjdk21
+    state: latest

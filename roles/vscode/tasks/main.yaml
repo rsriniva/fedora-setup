@@ -1,0 +1,59 @@
+---
+- name: Download MS VSCode GPG keys
+  tags: [vscode]
+  ansible.builtin.command: rpm --import https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Configure VSCode DNF Repo
+  tags: [vscode]
+  ansible.builtin.blockinfile:
+    dest: /etc/yum.repos.d/vscode.repo
+    create: true
+    block: |
+      [code]
+      name=Visual Studio Code
+      baseurl=https://packages.microsoft.com/yumrepos/vscode
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc"
+    
+- name: Refresh DNF cache
+  tags: [vscode]
+  ansible.builtin.command: dnf check-update
+ 
+- name: Install VSCode
+  tags: [vscode]
+  ansible.builtin.dnf:
+    name: code
+   
+- name: Install VSCode Extensions
+  tags: [vscode-ext]
+  become_user: rsriniva
+  ansible.builtin.shell: code --install-extension "{{ item }}"
+  loop:
+    - eamodio.gitlens
+    - ms-python.python
+    - PKief.material-icon-theme
+    - redhat.ansible
+    - redhat.vscode-yaml
+    - yzhang.markdown-all-in-one
+    - asciidoctor.asciidoctor-vscode
+    - redhat.java
+    - redhat.vscode-xml
+    - redhat.vscode-quarkus
+    - austenc.tailwind-docs
+    - bradlc.vscode-tailwindcss
+    - ban.spellright
+    - ms-python.debugpy
+    - rvest.vs-code-prettier-eslint
+    - esbenp.prettier-vscode
+    - ms-vscode.makefile-tools
+    - ritwickdey.liveserver
+    - justusadam.language-haskell
+    - haskell.haskell
+    - ms-python.flake8
+    - dsznajder.es7-react-js-snippets
+    - ms-azuretools.vscode-docker
+    - betterthantomorrow.calva
+    - betterthantomorrow.calva-spritz
+    - ms-python.black-formatter
+    - golang.Go

@@ -1,0 +1,10 @@
+---
+- name: Copy .gitconfig to $HOME
+  tags: [git]
+  become: false
+  become_user: "{{ username }}"
+  ansible.builtin.copy:
+      src: .gitconfig
+      dest: "/home/{{ username }}/.gitconfig"
+      owner: "{{ username }}"
+      group: "{{ username }}"

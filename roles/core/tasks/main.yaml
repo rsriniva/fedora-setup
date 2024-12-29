@@ -1,0 +1,90 @@
+---
+#- name: Show Facts
+#  tags: [debug]
+#  ansible.builtin.debug:
+#    var: ansible_facts
+
+- name: Set hostname
+  tags: [core]
+  ansible.builtin.hostname: 
+    name: '{{ hostname }}'
+ 
+- name: Configure DNF settings
+  tags: [core]
+  ansible.builtin.blockinfile:
+    dest: /etc/dnf/dnf.conf
+    block: |
+      max_parallel_downloads=10
+      fastestmirror=True
+
+- name: Clean dnf cache
+  tags: [core]
+  ansible.builtin.command: dnf clean all
+  ignore_errors: true
+
+- name: Update system
+  tags: [core]
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+
+- name: Group Install Base Packages
+  tags: [core]
+  ansible.builtin.dnf:
+    name:
+      - "@development-tools"
+      - "@virtualization"
+    state: installed
+
+- name: Start libvirtd daemon, enable at boot
+  tags: [core]
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: true
+    name: libvirtd
+
+- name: Install core packages
+  tags: [core]
+  ansible.builtin.dnf:
+    name:
+      - wget
+      - curl
+      - neovim
+      - readline
+      - htop
+      - jq
+      - yq
+      - gnote
+      - python3-psutil
+      - python3-libdnf5
+      - python3-dnf
+      - python3-ansible-lint
+      - dnf-plugins-core
+
+- name: Refresh firmware cache
+  tags: [core]
+  ansible.builtin.command:
+    cmd: fwupdtool refresh
+
+- name: Update firmware
+  tags: [core]
+  ansible.builtin.command:
+    cmd: fwupdtool update
+
+- name: Configure shell aliases
+  tags: [core]
+  ansible.builtin.blockinfile:
+    dest: "/home/{{ username }}/.bashrc"
+    block: |
+      alias vi='nvim'
+      alias vim='nvim'
+      export EDITOR=nvim
+
+- name: Enable FlatPak Repo
+  tags: [core, flatpak]
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+    method: system
+    enabled: true

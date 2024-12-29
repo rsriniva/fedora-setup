@@ -1,0 +1,242 @@
+---
+####### podman tasks ########
+
+- name: Install Podman Desktop
+  tags: [ocp-kube]
+  community.general.flatpak:
+    name: io.podman_desktop.PodmanDesktop
+    state: present
+
+- name: Install podman and deps
+  tags: [ocp-kube]
+  ansible.builtin.dnf:
+    name:
+      - podman
+
+####### docker.io tasks ########
+
+- name: Add Docker dnf repo
+  tags: [ocp-kube]
+  ansible.builtin.command: dnf-3 config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+
+- name: Refresh dnf cache
+  tags: [ocp-kube]
+  ansible.builtin.command: dnf check-update
+
+- name: Install Docker
+  tags: [ocp-kube]
+  ansible.builtin.dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+- name: Create docker group
+  tags: [ocp-kube]
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Add user to docker group
+  tags: [ocp-kube]
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: docker
+    append: true
+
+- name: Start docker daemon, enable at boot
+  tags: [ocp-kube]
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: true
+    name: docker
+
+####### kubectl tasks ########
+
+- name: Get latest stable version of kubectl
+  tags: [ocp-kube]
+  ansible.builtin.uri:
+    url: https://dl.k8s.io/release/stable.txt
+    return_content: true
+  register: kubectl_version_data
+  when: kubectl_version is undefined
+
+- name: Set kubectl_version
+  tags: [ocp-kube]
+  ansible.builtin.set_fact:
+    kubectl_version: "{{ kubectl_version_data.content }}"
+  when: kubectl_version is undefined
+
+- name: Set kubectl_arch
+  tags: [ocp-kube]
+  ansible.builtin.set_fact:
+    kubectl_arch: "{{ kubectl_arch_lookup[ansible_architecture] }}"
+
+- name: Get kubectl sha256
+  tags: [ocp-kube]
+  ansible.builtin.uri:
+    url: "https://dl.k8s.io/{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl.sha256"
+    return_content: true
+  register: kubectl_sha256_data
+
+- name: Set kubectl_sha256
+  tags: [ocp-kube]
+  ansible.builtin.set_fact:
+    kubectl_sha256: "{{ kubectl_sha256_data.content }}"
+
+- name: Set kubectl_version_short
+  tags: [ocp-kube]
+  ansible.builtin.set_fact:
+    kubectl_version_short: "{{ kubectl_version | regex_replace('^v(\\d+\\.\\d+)\\.\\d+$', '\\1') }}"
+
+- name: Set kubectl_binary
+  tags: [ocp-kube]
+  ansible.builtin.set_fact:
+    kubectl_binary: "kubectl-{{ kubectl_version_short }}"
+
+- name: Print variable values
+  tags: [ocp-kube]
+  ansible.builtin.debug:
+    msg:
+      - "kubectl_version: {{ kubectl_version }}"
+      - "kubectl_version_short: {{ kubectl_version_short }}"
+      - "kubectl_binary: {{ kubectl_binary }}"
+      - "kubectl_arch: {{ kubectl_arch }}"
+      - "kubectl_sha256: {{ kubectl_sha256 }}"
+
+- name: Install kubectl
+  tags: [ocp-kube]
+  ansible.builtin.get_url:
+    url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl"
+    dest: "/usr/local/bin/{{ kubectl_binary }}"
+    owner: root
+    group: root
+    mode: "0755"
+    checksum: "sha256:{{ kubectl_sha256 }}"
+
+- name: Link kubectl to {{ kubectl_binary }}
+  tags: [ocp-kube]
+  ansible.builtin.file:
+    src: "{{ kubectl_binary }}"
+    dest: /usr/local/bin/kubectl
+    owner: root
+    group: root
+    state: link
+
+- name: Create /etc/bash_completion.d if it doesn't exist
+  tags: [ocp-kube]
+  ansible.builtin.file:
+    path: /etc/bash_completion.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Add kubectl completion
+  tags: [ocp-kube]
+  ansible.builtin.shell: kubectl completion bash > /etc/bash_completion.d/kubectl
+  args:
+    creates: /etc/bash_completion.d/kubectl
+
+####### oc client tasks ########
+
+- name: Download OpenShift client (oc)
+  tags: [ocp-kube]
+  ansible.builtin.get_url:
+    url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz"
+    dest: "/tmp/openshift-client-linux.tar.gz"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Extract OpenShift client from archive (oc)
+  tags: [ocp-kube]
+  ansible.builtin.unarchive:
+    src: /tmp/openshift-client-linux.tar.gz
+    dest: /tmp
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy oc binary to /usr/local/bin
+  tags: [ocp-kube]
+  ansible.builtin.copy:
+    src: /tmp/oc
+    dest: /usr/local/bin/oc
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Download OpenShift Local (CRC)
+  tags: [ocp-kube]
+  ansible.builtin.get_url:
+    url: "https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/crc/2.45.0/crc-linux-amd64.tar.xz"
+    dest: /tmp/crc-linux-amd64.tar.xz
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Extract OpenShift Local (CRC) archive
+  tags: [ocp-kube]
+  ansible.builtin.unarchive:
+    src: /tmp/openshift-client-linux.tar.gz
+    dest: /tmp
+    owner: root
+    group: root
+    mode: "0755"
+    extra_opts:
+      - --strip-components=1
+
+- name: Copy crc binary to /usr/local/bin
+  tags: [ocp-kube]
+  ansible.builtin.copy:
+    src: "/tmp/crc"
+    dest: /usr/local/bin/crc
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure crc settings
+  tags: [ocp-kube]
+  become: false
+  become_user: "{{ username }}"
+  ansible.builtin.shell: |
+    crc config set cpus 12
+    crc config set memory 16192
+    crc config set disk-size 100g
+    crc config set consent-telemetry no
+  args:
+    executable: /bin/bash
+
+- name: Install Helm CLI
+  tags: [ocp-kube]
+  ansible.builtin.dnf:
+    name: helm
+    state: present
+
+- name: Download minikube
+  tags: [ocp-kube]
+  ansible.builtin.get_url:
+    url: "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
+    dest: "/tmp/minikube-linux-amd64"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install minikube
+  tags: [ocp-kube]
+  ansible.builtin.command: install /tmp/minikube-linux-amd64 /usr/local/bin/minikube
+
+- name: Configure minikube settings
+  tags: [ocp-kube]
+  become: false
+  become_user: "{{ username }}"
+  ansible.builtin.shell: |
+    minikube config set driver docker
+    minikube config set cpus 12
+    minikube config set memory 16192
+    minikube config set disk-size 100g
+  args:
+    executable: /bin/bash

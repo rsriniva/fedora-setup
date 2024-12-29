@@ -1,0 +1,17 @@
+--- 
+- name: Install Red Hat VPN dependencies
+  tags: [vpn]
+  ansible.builtin.dnf5:
+    name:
+      - NetworkManager-openvpn
+      - NetworkManager-openvpn-gnome
+    state: latest
+   
+- name: Install Red Hat specific VPN rpms
+  tags: [vpn]
+  ansible.builtin.dnf5:
+    name:
+      - /tmp/redhat-internal-cert-install-0.1-29.el7.noarch.rpm
+      - /tmp/redhat-internal-NetworkManager-openvpn-profiles-0.1-62.el8.noarch.rpm
+    state: present
+    disable_gpg_check: true

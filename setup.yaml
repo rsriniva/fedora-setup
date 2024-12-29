@@ -1,0 +1,21 @@
+---
+- name: Set up Fedora Workstation
+  hosts: workstation
+  become: true
+  roles:
+    - core
+    - www
+    - gnome
+    - vpn
+    - java
+    - vscode
+    - nodejs
+    - terminal
+    - sshconfig
+    - git
+    - video
+    - graphics
+    - ebooks
+    - neovim
+    - databases
+    - ocp-kube

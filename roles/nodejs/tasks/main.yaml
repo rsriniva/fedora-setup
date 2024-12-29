@@ -1,0 +1,22 @@
+---
+- name: Install nvm
+  tags: [nodejs]
+  become: false
+  ansible.builtin.shell: >
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  args:
+    executable: /bin/bash
+    chdir: "/home/{{ username }}"
+    creates: "/home/{{ username }}/.nvm/nvm.sh"
+
+- name: Install Node.js LTS
+  tags: [nodejs]
+  become: false
+  ansible.builtin.shell: >
+    . /home/{{ username }}/.nvm/nvm.sh && nvm install {{ item }}
+  args:
+    executable: /bin/bash
+    chdir: "/home/{{ username }}"
+    creates: "/home/{{ username }}/.nvm/versions/{{ item }}"
+  loop:
+    - 22.12.0

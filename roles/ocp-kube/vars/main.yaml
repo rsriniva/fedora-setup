@@ -1,0 +1,5 @@
+---
+kubectl_install_method: binary
+
+kubectl_arch_lookup:
+  x86_64: "amd64"

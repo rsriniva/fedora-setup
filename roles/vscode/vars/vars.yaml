@@ -1,0 +1,30 @@
+---
+vscode_extensions: 
+  - eamodio.gitlens
+  - ms-python.python
+  - PKief.material-icon-theme
+  - redhat.ansible
+  - redhat.vscode-yaml
+  - yzhang.markdown-all-in-one
+  - asciidoctor.asciidoctor-vscode
+  - redhat.java
+  - redhat.vscode-xml
+  - redhat.vscode-quarkus
+  - austenc.tailwind-docs
+  - bradlc.vscode-tailwindcss
+  - ban.spellright
+  - ms-python.debugpy
+  - ms-python.pylance
+  - rvest.vs-code-prettier-eslint
+  - esbenp.prettier-vscode
+  - ms-vscode.makefile-tools
+  - ritwickdey.liveserver
+  - justusadam.language-haskell
+  - haskell.haskell
+  - ms-python.flake8
+  - dsznajder.es7-react-js-snippets
+  - ms-azuretools.vscode-docker
+  - betterthantomorrow.calva
+  - betterthantomorrow.calva-spritz
+  - ms-python.black-formatter
+  - golang.Go

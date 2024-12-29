@@ -1,0 +1,30 @@
+---
+- name: Install jPDF Tweak
+  tags: [graphics]
+  community.general.flatpak:
+    name: net.sourceforge.jpdftweak.jPdfTweak
+    state: present
+
+- name: Install Flameshot
+  tags: [graphics]
+  community.general.flatpak:
+    name: org.flameshot.Flameshot
+    state: present
+
+- name: Install Drawing App
+  tags: [graphics]
+  community.general.flatpak:
+    name: com.github.maoschanz.drawing
+    state: present
+
+- name: Install Draw.io
+  tags: [graphics]
+  community.general.flatpak:
+    name: com.jgraph.drawio.desktop
+    state: present
+
+- name: Allow Flameshot to take screenshots
+  tags: [graphics]
+  become: false
+  become_user: "{{ username }}"
+  ansible.builtin.command: flatpak permission-set screenshot screenshot org.flameshot.Flameshot yes

@@ -1,0 +1,36 @@
+---
+- name: Create .ssh folder
+  tags: [sshconfig]
+  ansible.builtin.file:
+    path: "/home/{{ username }}/.ssh"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0700'
+
+- name: Copy SSH Private Key
+  tags: [sshconfig]
+  ansible.builtin.copy:
+    src: /tmp/id_rsa
+    dest: "/home/{{ username }}/.ssh/id_rsa"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0600'
+
+- name: Copy SSH Public Key
+  tags: [sshconfig]
+  ansible.builtin.copy:
+    src: /tmp/id_rsa.pub
+    dest: "/home/{{ username }}/.ssh/id_rsa.pub"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+- name: Start the SSH agent and add the private Key
+  tags: [sshconfig]
+  become: false
+  become_user: "{{ username }}"
+  ignore_errors: true
+  ansible.builtin.shell: >
+    eval "$(ssh-agent -s)"
+    ssh-add ~/.ssh/id_rsa
