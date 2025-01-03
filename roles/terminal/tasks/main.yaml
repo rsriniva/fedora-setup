@@ -16,22 +16,70 @@
       - jet-brains-mono-nerd-fonts
     state: present
 
-- name: Add Starship COPR
-  tags: [terminal]
-  community.general.copr:
-    name: atim/starship
-    state: enabled
-
-- name: Install Starship Shell Prompt
+- name: Install zsh Shell
   tags: [terminal]
   ansible.builtin.dnf:
-    name: starship
+    name: zsh
     state: present
 
-- name: Add Starship to Profiles
+- name: Set user shell to zsh
+  tags: [terminal]
+  ansible.builtin.user:
+    name: "{{ username }}"
+    shell: /bin/zsh
+
+- name: Download ohmyzsh
   tags: [terminal]
   become: false
-  become_user: '{{ username }}'
-  ansible.builtin.lineinfile:
-    path: ~/.bashrc
-    line: eval "$(starship init bash)"
+  become_user: "{{ username }}"
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    dest: "/home/{{ username }}/install.sh"
+    mode: '0755'
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Install ohmyzsh
+  tags: [terminal]
+  become: false
+  become_user: "{{ username }}"
+  ansible.builtin.script:
+    cmd: "/home/{{ username }}/install.sh"
+
+- name: Install PowerLevel10K
+  tags: [terminal]
+  become: false
+  become_user: "{{ username }}"
+  ansible.builtin.git:
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: "/home/{{ username }}/.oh-my-zsh/custom/themes/powerlevel10k"
+    depth: 1
+
+- name: Copy .zshrc
+  tags: [terminal]
+  ansible.builtin.copy:
+    src: .zshrc
+    dest: "/home/{{ username }}/.zshrc"
+    mode: '0755'
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+# - name: Add Starship COPR
+#   tags: [terminal]
+#   community.general.copr:
+#     name: atim/starship
+#     state: enabled
+
+# - name: Install Starship Shell Prompt
+#   tags: [terminal]
+#   ansible.builtin.dnf:
+#     name: starship
+#     state: present
+
+# - name: Add Starship to Profiles
+#   tags: [terminal]
+#   become: false
+#   become_user: '{{ username }}'
+#   ansible.builtin.lineinfile:
+#     path: ~/.bashrc
+#     line: eval "$(starship init bash)"
