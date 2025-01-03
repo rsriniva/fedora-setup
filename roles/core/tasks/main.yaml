@@ -88,3 +88,15 @@
     flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
     method: system
     enabled: true
+
+- name: Add Fedy COPR
+  tags: [core,fedy]
+  community.general.copr:
+    name: kwizart/fedy
+    state: enabled
+
+- name: Install Fedy
+  tags: [core,fedy]
+  ansible.builtin.dnf:
+    name: fedy
+    state: present
