@@ -29,3 +29,5 @@
       - gnome-shell-extension-launch-new-instance
       - gnome-shell-extension-no-overview
       - gnome-shell-extension-workspace-indicator
+      - candy-icon-theme
+      - cosmic-icon-theme
