@@ -58,7 +58,7 @@
 - name: Copy .zshrc
   tags: [terminal]
   ansible.builtin.copy:
-    src: .zshrc
+    src: zshrc
     dest: "/home/{{ username }}/.zshrc"
     mode: '0755'
     owner: "{{ username }}"
