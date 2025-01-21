@@ -64,22 +64,3 @@
     owner: "{{ username }}"
     group: "{{ username }}"
 
-# - name: Add Starship COPR
-#   tags: [terminal]
-#   community.general.copr:
-#     name: atim/starship
-#     state: enabled
-
-# - name: Install Starship Shell Prompt
-#   tags: [terminal]
-#   ansible.builtin.dnf:
-#     name: starship
-#     state: present
-
-# - name: Add Starship to Profiles
-#   tags: [terminal]
-#   become: false
-#   become_user: '{{ username }}'
-#   ansible.builtin.lineinfile:
-#     path: ~/.bashrc
-#     line: eval "$(starship init bash)"
