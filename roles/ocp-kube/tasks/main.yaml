@@ -181,7 +181,7 @@
 - name: Extract OpenShift Local (CRC) archive
   tags: [ocp-kube]
   ansible.builtin.unarchive:
-    src: /tmp/openshift-client-linux.tar.gz
+    src: /tmp/crc-linux-amd64.tar.xz
     dest: /tmp
     owner: root
     group: root
@@ -204,7 +204,7 @@
   become_user: "{{ username }}"
   ansible.builtin.shell: |
     crc config set cpus 12
-    crc config set memory 16192
+    crc config set memory 24576
     crc config set disk-size 100g
     crc config set consent-telemetry no
   args:
@@ -228,15 +228,3 @@
 - name: Install minikube
   tags: [ocp-kube]
   ansible.builtin.command: install /tmp/minikube-linux-amd64 /usr/local/bin/minikube
-
-- name: Configure minikube settings
-  tags: [ocp-kube]
-  become: false
-  become_user: "{{ username }}"
-  ansible.builtin.shell: |
-    minikube config set driver docker
-    minikube config set cpus 12
-    minikube config set memory 16192
-    minikube config set disk-size 100g
-  args:
-    executable: /bin/bash

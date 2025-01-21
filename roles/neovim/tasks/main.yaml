@@ -1,6 +1,6 @@
 ---
 - name: Install neovim kickstart dependencies
-  tags: [neoivm]
+  tags: [neovim]
   ansible.builtin.dnf5:
     name:
       - ripgrep

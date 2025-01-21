@@ -60,6 +60,9 @@
       - python3-dnf
       - python3-ansible-lint
       - dnf-plugins-core
+      - libva-utils
+      - vdpauinfo
+      - radeontop
 
 - name: Refresh firmware cache
   tags: [core]
