@@ -19,4 +19,4 @@
     chdir: "/home/{{ username }}"
     creates: "/home/{{ username }}/.nvm/versions/{{ item }}"
   loop:
-    - 22.12.0
+    - 22.13.1
