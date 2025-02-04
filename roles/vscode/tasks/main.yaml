@@ -48,7 +48,6 @@
     - esbenp.prettier-vscode
     - ms-vscode.makefile-tools
     - ritwickdey.liveserver
-    - justusadam.language-haskell
     - haskell.haskell
     - ms-python.flake8
     - dsznajder.es7-react-js-snippets
