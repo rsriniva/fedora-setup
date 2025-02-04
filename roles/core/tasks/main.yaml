@@ -6,9 +6,9 @@
 
 - name: Set hostname
   tags: [core]
-  ansible.builtin.hostname: 
-    name: '{{ hostname }}'
- 
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+
 - name: Configure DNF settings
   tags: [core]
   ansible.builtin.blockinfile:
@@ -63,6 +63,8 @@
       - libva-utils
       - vdpauinfo
       - radeontop
+      - bat
+      - fzf
 
 - name: Refresh firmware cache
   tags: [core]
@@ -91,4 +93,3 @@
     flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
     method: system
     enabled: true
-

@@ -138,6 +138,7 @@ unset rc
 alias vi='nvim'
 alias vim='nvim'
 export EDITOR=nvim
+alias cat='bat'
 # END ANSIBLE MANAGED BLOCK
 
 export NVM_DIR="$HOME/.nvm"

@@ -12,8 +12,7 @@ A set of Ansible playbooks and roles to automatically configure a Fedora GNOME W
 # Playbook Run
 
 * Read through and set appropriate values in the group_vars/all.yaml file (username, email, hostname etc)
-* ansible-playbook setup.yaml -K --check (check if everything is OK)
-* ansible-playbook setup.yaml -K (run the playbook when check returns no error)
+* ansible-playbook setup.yaml -K (run the playbook)
 
 # Run Selective Playbook Tasks
 * Dump all tags using ansible-playbook setup.yaml --list-tags

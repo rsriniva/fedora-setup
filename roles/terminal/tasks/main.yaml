@@ -14,6 +14,10 @@
       - iosevka-nerd-fonts
       - iosevka-term-nerd-fonts
       - jet-brains-mono-nerd-fonts
+      - fira-code-fonts
+      - fira-mono-nerd-fonts
+      - cascadia-mono-nerd-fonts
+      - cascadia-code-nerd-fonts
     state: present
 
 - name: Install zsh Shell
@@ -35,7 +39,7 @@
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
     dest: "/home/{{ username }}/install.sh"
-    mode: '0755'
+    mode: "0755"
     owner: "{{ username }}"
     group: "{{ username }}"
 
@@ -60,7 +64,6 @@
   ansible.builtin.copy:
     src: zshrc
     dest: "/home/{{ username }}/.zshrc"
-    mode: '0755'
+    mode: "0755"
     owner: "{{ username }}"
     group: "{{ username }}"
-
